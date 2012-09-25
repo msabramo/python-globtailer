@@ -19,9 +19,10 @@ class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
     """
 
 
-    def __init__(self, glob_pattern, interval=1):
+    def __init__(self, glob_pattern, interval=1, max_duration=None):
         self.glob_pattern = glob_pattern
         self.interval = interval
+        self.max_duration = max_duration
         self.logger = logging.getLogger(self.__class__.__name__)
 
 
@@ -33,8 +34,9 @@ class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
         offset = input_file.tell()
         input_file.close()
         self.on_start_watching_file(most_recent_filename)
+        self.start_time = time.time()
 
-        while True:
+        while self.max_duration is None or time.time() - self.start_time < self.max_duration:
             with open(most_recent_filename) as input_file:
             	input_file.seek(offset, 0)
 
