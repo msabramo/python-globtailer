@@ -76,7 +76,7 @@ class BasicTestCase(unittest.TestCase):
                 f.write("line6\n")
 
         self.assertEqual(self.tailer.glob_pattern, self.get_path("log*"))
-        self.assertIsNone(self.tailer.get_most_recent_filename())
+        self.assertEqual(self.tailer.get_most_recent_filename(), None)
 
         process = multiprocessing.Process(target=write_to_log)
         process.start()
@@ -88,7 +88,7 @@ class BasicTestCase(unittest.TestCase):
 
     def test_no_matching_files(self):
         self.assertEqual(self.tailer.glob_pattern, self.get_path("log*"))
-        self.assertIsNone(self.tailer.get_most_recent_filename())
+        self.assertEqual(self.tailer.get_most_recent_filename(), None)
 
         lines = [line for line in self.tailer]
 
