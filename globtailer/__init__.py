@@ -29,20 +29,24 @@ class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
     def __iter__(self):
         most_recent_filename = self.get_most_recent_filename()
         previous_most_recent_filename = most_recent_filename
-        input_file = open(most_recent_filename)
-        input_file.seek(0, 2)  # Seek to end of file
-        offset = input_file.tell()
-        input_file.close()
-        self.on_start_watching_file(most_recent_filename)
+
+        if most_recent_filename:
+            input_file = open(most_recent_filename)
+            input_file.seek(0, 2)  # Seek to end of file
+            offset = input_file.tell()
+            input_file.close()
+            self.on_start_watching_file(most_recent_filename)
+
         self.start_time = time.time()
 
         while self.max_duration is None or time.time() - self.start_time < self.max_duration:
-            with open(most_recent_filename) as input_file:
-            	input_file.seek(offset, 0)
+            if most_recent_filename:
+                with open(most_recent_filename) as input_file:
+                    input_file.seek(offset, 0)
 
-            	for line in input_file:
-                    yield self.yield_transformer(input_file, offset, line)
-            	    offset = input_file.tell()
+                    for line in input_file:
+                        yield self.yield_transformer(input_file, offset, line)
+                        offset = input_file.tell()
 
             most_recent_filename = self.get_most_recent_filename()
 
@@ -57,7 +61,7 @@ class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
     def yield_transformer(self, input_file, offset, line):
         """This simple method controls what the generator will yield.
 
-	It's only reason for existence is so that folks can subclass and
+        It's only reason for existence is so that folks can subclass and
         override this to make the generator return more information.
 
         """
@@ -67,11 +71,12 @@ class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
     def get_most_recent_filename(self):
         """Get filename that matches self.glob_pattern and has most recent modification time."""
 
-	# List of tuples (mtime, filename), sorted by mtime
+        # List of tuples (mtime, filename), sorted by mtime
         data = sorted([(os.stat(fn).st_mtime, fn) for fn in glob.glob(self.glob_pattern)])
 
         # Get the last tuple in list sorted by mtime and return the filename 
-        return data[-1][1]
+        if len(data) > 0:
+            return data[-1][1]
 
 
     def on_start_watching_file(self, filename):
