@@ -56,26 +56,40 @@ class BasicTestCase(unittest.TestCase):
         process = multiprocessing.Process(target=write_to_log)
         process.start()
 
-        a_iter = iter(self.tailer)
+        lines = [line for line in self.tailer]
 
-        line = next(a_iter)
-        self.assertEqual(line, "line4\n")
-        line = next(a_iter)
-        self.assertEqual(line, "line5\n")
-        line = next(a_iter)
-        self.assertEqual(line, "line6\n")
-        line = next(a_iter)
-        self.assertEqual(line, "line7\n")
-        line = next(a_iter)
-        self.assertEqual(line, "line8\n")
-        line = next(a_iter)
-        self.assertEqual(line, "line9\n")
+        self.assertEqual(
+            lines,
+            ["line4\n", "line5\n", "line6\n",
+             "line7\n", "line8\n", "line9\n"])
 
         process.join()
 
 
-    def test_no_matching_files(self):
-        for line in self.tailer:
-            print(line)
+    def test_no_matching_files_to_start(self):
+        def write_to_log():
+            time.sleep(1)
 
-        print("*** DONE ***")
+            with open(self.get_path("log.01.01"), "a") as f:
+                f.write("line4\n")
+                f.write("line5\n")
+                f.write("line6\n")
+
+        self.assertEqual(self.tailer.glob_pattern, self.get_path("log*"))
+        self.assertIsNone(self.tailer.get_most_recent_filename())
+
+        process = multiprocessing.Process(target=write_to_log)
+        process.start()
+
+        lines = [line for line in self.tailer]
+
+        self.assertEqual(lines, ["line4\n", "line5\n", "line6\n"])
+
+
+    def test_no_matching_files(self):
+        self.assertEqual(self.tailer.glob_pattern, self.get_path("log*"))
+        self.assertIsNone(self.tailer.get_most_recent_filename())
+
+        lines = [line for line in self.tailer]
+
+        self.assertEqual(len(lines), 0)
