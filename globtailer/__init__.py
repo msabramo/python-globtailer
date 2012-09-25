@@ -44,7 +44,13 @@ class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
                 with open(most_recent_filename) as input_file:
                     input_file.seek(offset, 0)
 
-                    for line in input_file:
+                    # I use a while loop and file.readline() instead of using a for loop:
+                    # for line in input_file:
+                    # The reason is that the for loop calls next() and triggers this error:
+                    # IOError: telling position disabled by next() call
+                    while True:
+                        line = input_file.readline()
+                        if line == '': break
                         yield self.yield_transformer(input_file, offset, line)
                         offset = input_file.tell()
 
