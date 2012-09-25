@@ -21,6 +21,11 @@ setup(
     url='https://github.com/msabramo/python-globtailer',
     packages=['globtailer'],
     test_suite='globtailer.tests',
+    entry_points={
+        'console_scripts': [
+            'globtailer = globtailer.main:console_script',
+        ],
+    },
     use_2to3=True,
     zip_safe=False,
     license='MIT',
