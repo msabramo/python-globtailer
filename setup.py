@@ -12,7 +12,7 @@ long_description = long_description.replace('Example usage:\n\n.. code:: python'
 
 setup(
     name='globtailer',
-    version='0.0.0',
+    version='0.1.0',
     description="""A generator that yields lines from the most recently modified file matching a glob pattern""",
     long_description=long_description,
     keywords='generator,tail',
