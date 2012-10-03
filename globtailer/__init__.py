@@ -4,7 +4,7 @@ import os
 import time
 
 
-class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
+class FileTailer(object):
     """A generator that yields lines from the most recently modified file
     matching a glob pattern.
 
@@ -93,7 +93,7 @@ class TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(object):
         self.logger.info("Switched to new file %r" % filename)
 
 
-class GetMostRecentlyModifiedFileMatchingGlobPatternGenerator(TailMostRecentlyModifiedFileMatchingGlobPatternGenerator):
+class FileTailerEx(FileTailer):
 
     def yield_transformer(self, input_file, offset, line):
         return (input_file, offset, line)

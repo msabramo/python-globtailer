@@ -6,7 +6,7 @@ import tempfile
 import time
 import unittest
 
-from globtailer import TailMostRecentlyModifiedFileMatchingGlobPatternGenerator
+from globtailer import FileTailer
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -16,7 +16,7 @@ class BasicTestCase(unittest.TestCase):
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp(prefix="python-globtailer-tests-")
         logging.info("Created temporary directory - %s" % self.tmpdir)
-        self.tailer = TailMostRecentlyModifiedFileMatchingGlobPatternGenerator(self.get_path("log*"), max_duration=6)
+        self.tailer = FileTailer(self.get_path("log*"), max_duration=6)
 
 
     def tearDown(self):
