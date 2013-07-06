@@ -7,7 +7,9 @@ python-globtailer
 The main class is ``FileTailer``, a generator that yields lines from the most
 recently modified file matching a glob pattern.
 
-Example::
+Example:
+
+.. code-block:: python
 
     from globtailer import FileTailer
 
